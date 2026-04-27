@@ -52,7 +52,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="back-home"><a href="../index.html">← Retour à l'accueil</a></div>
+        <div class="back-home"><a href="index.html">← Retour à l'accueil</a></div>
         <h1>🧹 Devenir femme de ménage</h1>
         <div class="subtitle">Inscrivez-vous pour rejoindre notre réseau</div>
         
@@ -69,7 +69,7 @@
         </form>
         <div id="message"></div>
         <div class="info">
-            Déjà inscrite ? <a href="connexion.html">Se connecter</a>
+            Déjà inscrite ? <a href="candidate-connexion.html">Se connecter</a>
         </div>
     </div>
 
@@ -92,26 +92,20 @@
                 return;
             }
             
-            // Récupérer les candidates existantes dans localStorage
             let candidates = JSON.parse(localStorage.getItem('menagepro_candidates') || '[]');
             
-            // Vérifier si l'email existe déjà
             if (candidates.some(c => c.email === email)) {
                 msg.innerHTML = '<div class="message error">❌ Cet email est déjà utilisé</div>';
                 return;
             }
             
-            // Créer la nouvelle candidate
             const newCandidate = {
                 id: Date.now(),
-                nom: nom,
-                email: email,
-                password: password,
-                telephone: telephone,
+                nom, email, password, telephone,
                 age: parseInt(age),
-                ville: ville,
+                ville,
                 experience: parseFloat(experience),
-                competences: competences,
+                competences,
                 status: 'pending',
                 dateInscription: new Date().toISOString()
             };
@@ -122,7 +116,7 @@
             msg.innerHTML = '<div class="message success">✅ Inscription réussie ! En attente de validation.</div>';
             
             setTimeout(() => {
-                window.location.href = 'connexion.html';
+                window.location.href = 'candidate-connexion.html';
             }, 2000);
         });
     </script>
