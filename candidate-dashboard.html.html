@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon espace | MenagePro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .btn-deconnexion {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        h2 { color: #333; margin-bottom: 20px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .info-item { padding: 10px; border-bottom: 1px solid #eee; }
+        .info-label { font-weight: bold; color: #666; }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .status-accepted { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧹 MenagePro - Espace candidate</h1>
+        <button class="btn-deconnexion" id="deconnexionBtn">Déconnexion</button>
+    </header>
+    <div class="container">
+        <div class="card">
+            <h2>📋 Mes informations</h2>
+            <div id="profileInfo" class="info-grid"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from '../firebase-config.js';
+        import { signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Vérifier connexion
+        if (!sessionStorage.getItem('candidateLoggedIn')) {
+            window.location.href = 'connexion.html';
+        }
+
+        const uid = sessionStorage.getItem('candidateUid');
+        const nom = sessionStorage.getItem('candidateNom');
+        document.querySelector('h1').innerHTML = `🧹 Bonjour ${nom}`;
+
+        // Charger les infos
+        async function loadProfile() {
+            const docRef = doc(db, "candidates", uid);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const statusText = data.status === 'accepted' ? '✅ Validé' : data.status === 'pending' ? '⏳ En attente' : '❌ Refusé';
+                const statusClass = data.status === 'accepted' ? 'status-accepted' : 'status-pending';
+                
+                document.getElementById('profileInfo').innerHTML = `
+                    <div class="info-item"><span class="info-label">Nom :</span> ${data.nom}</div>
+                    <div class="info-item"><span class="info-label">Email :</span> ${data.email}</div>
+                    <div class="info-item"><span class="info-label">Téléphone :</span> ${data.telephone}</div>
+                    <div class="info-item"><span class="info-label">Âge :</span> ${data.age} ans</div>
+                    <div class="info-item"><span class="info-label">Ville :</span> ${data.ville}</div>
+                    <div class="info-item"><span class="info-label">Expérience :</span> ${data.experience} an(s)</div>
+                    <div class="info-item"><span class="info-label">Compétences :</span> ${data.competences || 'Non renseigné'}</div>
+                    <div class="info-item"><span class="info-label">Statut :</span> <span class="status-badge ${statusClass}">${statusText}</span></div>
+                `;
+            }
+        }
+
+        loadProfile();
+
+        document.getElementById('deconnexionBtn').addEventListener('click', async () => {
+            await signOut(auth);
+            sessionStorage.clear();
+            window.location.href = 'connexion.html';
+        });
+    </script>
+</body>
+</html>

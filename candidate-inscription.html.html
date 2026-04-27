@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Femme de ménage | MenagePro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .message { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; }
+        .error { background: #fee; color: #c00; }
+        .success { background: #efe; color: #080; }
+        .info { text-align: center; margin-top: 20px; color: #666; }
+        .info a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Devenir femme de ménage</h1>
+        <form id="inscriptionForm">
+            <input type="text" id="nom" placeholder="Nom complet" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Mot de passe (min 6 caractères)" required>
+            <input type="tel" id="telephone" placeholder="Téléphone (ex: 690001122)" required>
+            <input type="number" id="age" placeholder="Âge (23-60 ans)" min="23" max="60" required>
+            <input type="text" id="ville" placeholder="Ville (Douala, Yaoundé...)" required>
+            <input type="number" id="experience" placeholder="Années d'expérience" step="0.5" required>
+            <textarea id="competences" rows="3" placeholder="Compétences (ex: repassage, nettoyage vitres...)"></textarea>
+            <button type="submit">📝 S'inscrire</button>
+        </form>
+        <div id="message"></div>
+        <div class="info">
+            Déjà inscrite ? <a href="connexion.html">Se connecter</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from '../firebase-config.js';
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const form = document.getElementById('inscriptionForm');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            messageDiv.innerHTML = '';
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const nom = document.getElementById('nom').value;
+            const telephone = document.getElementById('telephone').value;
+            const age = parseInt(document.getElementById('age').value);
+            const ville = document.getElementById('ville').value;
+            const experience = parseFloat(document.getElementById('experience').value);
+            const competences = document.getElementById('competences').value;
+
+            if (password.length < 6) {
+                messageDiv.innerHTML = '<div class="message error">❌ Le mot de passe doit avoir au moins 6 caractères</div>';
+                return;
+            }
+
+            try {
+                // 1. Créer le compte Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = userCredential.user.uid;
+
+                // 2. Sauvegarder les données dans Firestore
+                await setDoc(doc(db, "candidates", uid), {
+                    uid: uid,
+                    nom: nom,
+                    email: email,
+                    telephone: telephone,
+                    age: age,
+                    ville: ville,
+                    experience: experience,
+                    competences: competences,
+                    status: "pending", // pending, accepted, rejected
+                    dateInscription: new Date().toISOString(),
+                    type: "candidate"
+                });
+
+                messageDiv.innerHTML = '<div class="message success">✅ Inscription réussie ! En attente de validation par l\'administrateur. Vous recevrez un email de confirmation.</div>';
+                form.reset();
+                
+                setTimeout(() => {
+                    window.location.href = 'connexion.html';
+                }, 3000);
+                
+            } catch (error) {
+                console.error(error);
+                if (error.code === 'auth/email-already-in-use') {
+                    messageDiv.innerHTML = '<div class="message error">❌ Cet email est déjà utilisé</div>';
+                } else {
+                    messageDiv.innerHTML = `<div class="message error">❌ Erreur: ${error.message}</div>`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

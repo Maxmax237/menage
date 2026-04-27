@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MenagePro - Trouvez votre femme de ménage au Cameroun</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        header h1 { font-size: 48px; margin-bottom: 20px; }
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 30px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-3px); }
+        .btn-admin {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        .feature-card i { font-size: 48px; color: #667eea; margin-bottom: 20px; }
+        footer {
+            background: #1e1e2f;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧹 MenagePro</h1>
+        <p>Trouvez la femme de ménage idéale ou rejoignez notre réseau professionnel</p>
+        <div class="buttons">
+            <a href="candidate/inscription.html" class="btn">👩‍🍳 Je deviens femme de ménage</a>
+            <a href="candidate/connexion.html" class="btn">🔐 Espace candidate</a>
+            <a href="admin/login.html" class="btn btn-admin">👑 Administration</a>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="features">
+            <div class="feature-card"><div>✅</div><h3>Professionnelles qualifiées</h3><p>Toutes nos candidates sont vérifiées et expérimentées</p></div>
+            <div class="feature-card"><div>💰</div><h3>Paiement sécurisé</h3><p>Orange Money & MTN Mobile Money</p></div>
+            <div class="feature-card"><div>📍</div><h3>Service à Douala & Yaoundé</h3><p>Intervention rapide dans toute la ville</p></div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2024 MenagePro Cameroun - Mise en relation professionnelle</p>
+        <p>Contact: contact@menagepro.cm | Tél: +237 692030989</p>
+    </footer>
+</body>
+</html>
