@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Devenir femme de ménage</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { text-align: center; color: #333; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .back-home { text-align: center; margin-bottom: 20px; }
+        .back-home a { color: #667eea; text-decoration: none; }
+        .message { margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; }
+        .error { background: #fee; color: #c00; }
+        .success { background: #efe; color: #080; }
+        .info { text-align: center; margin-top: 20px; }
+        .info a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back-home"><a href="../index.html">← Retour à l'accueil</a></div>
+        <h1>🧹 Devenir femme de ménage</h1>
+        <div class="subtitle">Inscrivez-vous pour rejoindre notre réseau</div>
+        
+        <form id="inscriptionForm">
+            <input type="text" id="nom" placeholder="Nom complet" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Mot de passe (6 caractères min)" required>
+            <input type="tel" id="telephone" placeholder="Téléphone" required>
+            <input type="number" id="age" placeholder="Âge" min="18" max="60" required>
+            <input type="text" id="ville" placeholder="Ville (Douala, Yaoundé...)" required>
+            <input type="number" id="experience" placeholder="Années d'expérience" step="0.5" required>
+            <textarea id="competences" rows="3" placeholder="Compétences (ex: repassage, nettoyage...)"></textarea>
+            <button type="submit">📝 S'inscrire</button>
+        </form>
+        <div id="message"></div>
+        <div class="info">
+            Déjà inscrite ? <a href="connexion.html">Se connecter</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('inscriptionForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nom = document.getElementById('nom').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const telephone = document.getElementById('telephone').value;
+            const age = document.getElementById('age').value;
+            const ville = document.getElementById('ville').value;
+            const experience = document.getElementById('experience').value;
+            const competences = document.getElementById('competences').value;
+            const msg = document.getElementById('message');
+            
+            if (password.length < 6) {
+                msg.innerHTML = '<div class="message error">❌ Le mot de passe doit avoir au moins 6 caractères</div>';
+                return;
+            }
+            
+            // Récupérer les candidates existantes dans localStorage
+            let candidates = JSON.parse(localStorage.getItem('menagepro_candidates') || '[]');
+            
+            // Vérifier si l'email existe déjà
+            if (candidates.some(c => c.email === email)) {
+                msg.innerHTML = '<div class="message error">❌ Cet email est déjà utilisé</div>';
+                return;
+            }
+            
+            // Créer la nouvelle candidate
+            const newCandidate = {
+                id: Date.now(),
+                nom: nom,
+                email: email,
+                password: password,
+                telephone: telephone,
+                age: parseInt(age),
+                ville: ville,
+                experience: parseFloat(experience),
+                competences: competences,
+                status: 'pending',
+                dateInscription: new Date().toISOString()
+            };
+            
+            candidates.push(newCandidate);
+            localStorage.setItem('menagepro_candidates', JSON.stringify(candidates));
+            
+            msg.innerHTML = '<div class="message success">✅ Inscription réussie ! En attente de validation.</div>';
+            
+            setTimeout(() => {
+                window.location.href = 'connexion.html';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
